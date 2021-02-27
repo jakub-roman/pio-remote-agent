@@ -1,0 +1,23 @@
+name: Build containers
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    # add docker buildx
+    - name: install buildx
+      run: |
+        mkdir -p ~/.docker/cli-plugins
+        curl -o ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
+        chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - name: login to dockerhub
+      run: |
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username ${{ secrets.DOCKERHUB_USER }} --password-stdin
+    - name: build and push containers
+      run: |
+        docker buildx build -t jakubroman/pio-remote-agent --platform linux/amd64,linux/arm64 .
