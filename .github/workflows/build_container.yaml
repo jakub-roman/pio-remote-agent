@@ -24,6 +24,7 @@ jobs:
         docker login -u $USERNAME -p "$PASSWORD"
     - name: build and push containers
       run: |
+        docker buildx create --use --name builder default
         docker buildx build \
           --output "type=image,push=true" \
           --platform linux/amd64,linux/arm64,linux/arm/v7 \
