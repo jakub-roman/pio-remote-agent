@@ -1,5 +1,7 @@
 name: Build containers
 on:
+  schedule:
+    - cron: "0 0 * * 1" # rebuild once a week
   push:
     branches:
       - main
@@ -24,10 +26,11 @@ jobs:
         docker login -u $USERNAME -p "$PASSWORD"
     - name: build and push containers
       run: |
+        # ref: https://stackoverflow.com/a/60667468
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
         docker buildx create --name builder --driver docker-container --use
         docker buildx build \
           --output "type=image,push=true" \
-          --platform linux/amd64,linux/arm64 \
+          --platform linux/amd64,linux/arm64,linux/arm/v7 \
           --tag jakubroman/pio-remote-agent:latest \
           .
