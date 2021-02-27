@@ -24,7 +24,8 @@ jobs:
         docker login -u $USERNAME -p "$PASSWORD"
     - name: build and push containers
       run: |
-        docker buildx create --use --name builder default
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        docker buildx create --name builder --driver docker-container --use
         docker buildx build \
           --output "type=image,push=true" \
           --platform linux/amd64,linux/arm64 \
