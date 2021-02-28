@@ -1,0 +1,10 @@
+version: "3"
+services:
+  pio:
+    container_name: pio-remote-agent
+    image: jakubroman/pio-remote-agent
+    restart: always
+    env_file: pio.env
+    privileged: true
+    volumes:
+      - /dev:/dev
